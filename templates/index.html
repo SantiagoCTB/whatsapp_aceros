@@ -85,7 +85,17 @@
                     data.mensajes.forEach(msg => {
                         const div = document.createElement('div');
                         div.className = msg[1]; // cliente, bot, asesor
-                        div.textContent = `[${msg[2]}] ${msg[1]}: ${msg[0]}`;
+                        let contenido = `[${msg[2]}] ${msg[1]}: `;
+                        if (msg[0].startsWith('[Audio]')) {
+                            const url = msg[0].replace('[Audio] ', '').trim();
+                            const audio = document.createElement('audio');
+                            audio.controls = true;
+                            audio.src = url;
+                            div.innerHTML = contenido;
+                            div.appendChild(audio);
+                        } else {
+                            div.textContent = contenido + msg[0];
+                        }
                         chatBox.appendChild(div);
                     });
                     chatBox.scrollTop = chatBox.scrollHeight;

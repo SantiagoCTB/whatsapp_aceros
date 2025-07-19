@@ -2,6 +2,7 @@ import json
 from config import Config
 from services.db import guardar_mensaje
 import requests
+import os
 
 TOKEN = Config.META_TOKEN
 PHONE_ID = Config.PHONE_NUMBER_ID
@@ -76,3 +77,12 @@ def enviar_mensaje(numero, mensaje, tipo='bot', tipo_respuesta='texto', opciones
     print(f"[WA API] {resp.status_code} — {resp.text}")
 
     guardar_mensaje(numero, mensaje, tipo)
+
+def obtener_url_media(media_id):
+    token = os.getenv("META_TOKEN")
+    url = f"https://graph.facebook.com/v19.0/{media_id}"
+    headers = {"Authorization": f"Bearer {token}"}
+    response = requests.get(url, headers=headers)
+    if response.ok:
+        return response.json().get("url")
+    return None

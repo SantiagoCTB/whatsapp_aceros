@@ -31,13 +31,25 @@ def webhook():
                     message = messages[0]
                     mensaje_id = message.get('id')
                     from_number = message['from']
+
+                    # Detectar tipo de mensaje y extraer texto o URL de audio
                     if 'text' in message:
                         text = message['text']['body'].strip().lower()
+
                     elif 'interactive' in message:
                         text = message['interactive'].get('list_reply', {}).get('title') or \
                             message['interactive'].get('button_reply', {}).get('title')
                         if text:
                             text = text.strip().lower()
+
+                    elif 'audio' in message:
+                        from services.whatsapp_api import obtener_url_media
+                        media_id = message['audio'].get('id')
+                        if media_id:
+                            text = f"[Audio] {obtener_url_media(media_id)}"
+                        else:
+                            text = "[Audio sin ID]"
+
                     else:
                         return jsonify({"status": "unsupported_message_type"})
 
